@@ -1,0 +1,104 @@
+---
+title: "2023-10-10-inclass"
+author: "Wayne Frederick II"
+format: html
+embed-resources: true
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(moderndive)
+library(patchwork)
+```
+
+```{r}
+d <- evals %>% 
+  rename(bty = bty_avg, sex = gender)
+glimpse(d)
+```
+
+renamed it d and renamed the column names
+
+```{r}
+head(d)
+```
+
+```{r}
+library(skimr)
+skim(d)
+```
+
+```{r}
+summary(d)
+```
+
+```{r}
+ggplot(d, aes(x = bty)) + geom_histogram(boundary = 4, binwidth = .25, color = "white")
+```
+
+```{r}
+ggplot(d, aes(x = bty)) + geom_histogram(boundary = 4, binwidth = .5, color = "white") + scale_x_continuous(breaks = 2:9)
+```
+
+```{r}
+ggplot(d,aes(x = bty, y = score)) + geom_jitter(alpha = .3)
+```
+
+```{r}
+d %>% 
+  get_correlation(score ~ bty)   
+d %>%
+  select(score, bty) |> cor()
+```
+
+```{r}
+mod1 <- lm(score ~ bty, data = d)
+get_regression_table(mod1)
+```
+
+```{r}
+ggplot(d, aes(x = bty, y = score)) + geom_jitter(alpha = .3) + geom_smooth(method = "lm", se = FALSE) 
+```
+
+```{r}
+ggplot(d, aes(x = bty, y = score)) + geom_jitter(alpha = .3) +geom_smooth(method = "lm",
+se = FALSE, fullrange = TRUE) + scale_x_continuous(limits = c(0,8.5)) + geom_vline(xintercept = 0, color = "red", linetype = "dotted")
+```
+
+```{r}
+p <- ggplot(d, aes(x = bty,y = score)) +
+  geom_jitter(alpha = .3)
+p + geom_abline(intercept = 3.88, slope = .067, color = "blue", size = 1.5)
+```
+
+```{r}
+ggplot(d, aes(x = score)) + geom_histogram(boundary = 4, binwidth = .25, color = "white")
+```
+
+```{r}
+d %>% 
+  get_correlation(score ~ age)   
+d %>%
+  select(score, age) %>% cor()
+```
+
+```{r}
+mod2 <- lm(score ~ age, data = d)
+get_regression_table(mod1)
+```
+
+```{r}
+ggplot(d, aes(x = age, y = score)) + geom_jitter(alpha = .3) + geom_smooth(method = "lm", se = FALSE) 
+```
+
+```{r}
+ggplot(d,
+       aes(y = score,
+           x = age)) +
+  geom_boxplot(coef = 0,
+               outlier.alpha = 0,
+               width = .5) +
+  geom_jitter(alpha = .3,
+              height = .2) 
+```
