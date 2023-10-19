@@ -1,0 +1,117 @@
+---
+title: "MD06inclass"
+author: "Wayne"
+format: html
+embed-resources: true
+editor: visual
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+library(moderndive)
+library(ggthemes)
+library(patchwork)
+theme_set(theme_light())
+
+```
+
+```{r}
+data(evals)
+glimpse(evals)
+
+
+```
+
+```{r}
+d <- evals |>
+  rename(bty = bty_avg,    # just shorter to type
+         sex = gender)     # actually what they have
+
+glimpse(d)
+```
+
+```{r}
+head(d)
+```
+
+```{r}
+mod1 <- lm(score ~ sex,
+           data = d)
+
+get_regression_table(mod1)
+```
+
+```{r}
+mod1_preds <- get_regression_points(mod1)
+
+head(mod1_preds)
+```
+
+```{r}
+ggplot(d,
+       aes(x = sex,
+           y = score)) +
+  geom_jitter(alpha = .3) +
+  geom_smooth(method = "lm",
+              se = FALSE) +
+  labs(x = "Beauty",
+       y = "Evaluation",
+       title = "Simple regression results")
+```
+
+```{r}
+ggplot(mod1_preds,
+       aes(x = score,
+           y = residual)) +
+  geom_jitter(alpha = .3) +
+  geom_hline(yintercept = 0,
+             color = "blue") +
+  labs(x = "Sex",
+       y = "Residual",
+       title = "Simple regression residuals")
+```
+
+```{r}
+var_y <- d |> 
+  pull(score) |> 
+  var()
+
+var_y
+```
+
+```{r}
+ggplot(d,
+       aes(x = sex,
+           y = score)) +
+  geom_jitter(alpha = .3) +
+  geom_hline(yintercept = mean(d$score),
+             color = "blue") +
+  labs(x = "Sex",
+       y = "Evaluation",
+       title = "Guessing the mean for everyone")
+```
+
+```{r}
+ggplot(d,
+       aes(x = sex,
+           y = score)) +
+  geom_jitter(alpha = .3) +
+  geom_hline(yintercept = mean(d$score),
+             color = "blue") +
+  geom_smooth(method = "lm",
+              se = FALSE,
+              color = "red",
+              linetype = "dashed") +
+  labs(x = "Sex",
+       y = "Evaluation",
+       title = "Mean vs. regression line")
+```
+
+```{r}
+var_yhat1 <- mod1_preds |> 
+  pull(residual) |> 
+  var()
+
+var_yhat1
+```
